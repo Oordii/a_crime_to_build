@@ -1,7 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:crime_game/core/resources/extensions/build_context.dart';
 import 'package:crime_game/features/auth/data/auth/auth.dart';
-import 'package:crime_game/features/home/data/profile.dart';
+import 'package:crime_game/features/home/data/data.dart';
 import 'package:crime_game/features/home/domain/models/profile/profile.dart';
 import 'package:crime_game/features/home/presentation/widgets/campaign_card.dart';
 import 'package:crime_game/features/home/presentation/widgets/join_dialog.dart';
@@ -61,6 +61,7 @@ class SignInScreenState extends ConsumerState<HomeScreen> {
       body: SafeArea(
         child: Column(
           children: [
+            const SizedBox(height: 24),
             Container(
               height: 48,
               margin: EdgeInsets.symmetric(horizontal: 24),
@@ -110,15 +111,55 @@ class SignInScreenState extends ConsumerState<HomeScreen> {
                   child: Card(
                     child: SizedBox(
                       height: 700,
-                      child: CarouselSlider(
-                        options: CarouselOptions(enableInfiniteScroll: false),
-                        items: [
-                          1,
-                          2,
-                          3,
-                          4,
-                          5,
-                        ].map((i) => CampaignCard()).toList(),
+                      child: Consumer(
+                        builder: (context, ref, child) {
+                          final scenarios = ref.watch(scenariosProvider);
+
+                          return scenarios.map<Widget>(
+                            data: (data) {
+                              if (data.value.isEmpty) {
+                                return Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.info_outlined, size: 36),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'No scenarios found',
+                                      style: context.textTheme.bodyMedium,
+                                    ),
+                                  ],
+                                );
+                              }
+                              return CarouselSlider(
+                                options: CarouselOptions(
+                                  enableInfiniteScroll: false,
+                                ),
+                                items: data.value
+                                    .map((i) => CampaignCard(scenario: i))
+                                    .toList(),
+                              );
+                            },
+                            loading: (_) =>
+                                Center(child: CircularProgressIndicator()),
+                            error: (err) => Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.info_outlined,
+                                  size: 36,
+                                  color: Colors.red.shade700,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Error occured: ${err.error.toString()}',
+                                  style: context.textTheme.labelSmall,
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),

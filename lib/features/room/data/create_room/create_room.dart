@@ -15,7 +15,9 @@ class CreateRoom extends _$CreateRoom {
     state = AsyncLoading();
     List<Map<String, dynamic>> res;
     try {
-      res = await supabase.from('room').insert({}).select();
+      res = await supabase.from('room').insert({
+        'scenario_id': scenarioId,
+      }).select();
     } on PostgrestException catch (e) {
       throw e.message;
     }

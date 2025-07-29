@@ -1,16 +1,15 @@
 import 'package:crime_game/core/resources/extensions/build_context.dart';
 import 'package:crime_game/core/router/router_constants.dart';
 import 'package:crime_game/features/auth/presentation/widgets/submit_button.dart';
+import 'package:crime_game/features/home/domain/domain.dart';
 import 'package:crime_game/features/room/data/data.dart';
 import 'package:crime_game/features/room/domain/domain.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-const String example =
-    "In the shadows of a rain-slicked city, corruption whispers through alleyways and power hides behind polished smiles. As a hard-boiled detective with a checkered past, you’re pulled into a case that starts with a missing person—and ends with a conspiracy that could shatter what's left of justice. Trust no one. Follow the lies. Solve the crime... or become part of it.";
-
 class CampaignCard extends StatefulWidget {
-  const CampaignCard({super.key});
+  final ScenarioModel scenario;
+  const CampaignCard({super.key, required this.scenario});
 
   @override
   State<CampaignCard> createState() => _CampaignCardState();
@@ -37,7 +36,7 @@ class _CampaignCardState extends State<CampaignCard> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Image.network(
-                'https://media.istockphoto.com/id/2138789286/de/vektor/mafia-spion-mann-logo-smoking-anzug-ikone-vektor-stock-illustration.jpg?s=612x612&w=0&k=20&c=c2f5bCO6PRnwWciou8nw-MEeKjAUWy8JmH5PCahqZHM=',
+                widget.scenario.coverUrl,
                 height: 450,
                 width: 800,
                 fit: BoxFit.cover,
@@ -53,7 +52,7 @@ class _CampaignCardState extends State<CampaignCard> {
                       children: [
                         Expanded(
                           child: Text(
-                            'Shadow killer',
+                            widget.scenario.name,
                             style: context.textTheme.titleMedium,
                           ),
                         ),
@@ -65,7 +64,7 @@ class _CampaignCardState extends State<CampaignCard> {
                       children: [
                         Expanded(
                           child: Text(
-                            example,
+                            widget.scenario.shortDesc,
                             style: context.textTheme.bodyMedium,
                           ),
                         ),
@@ -98,7 +97,7 @@ class _CampaignCardState extends State<CampaignCard> {
                   onTap: () {
                     ref
                         .read(createRoomProvider.notifier)
-                        .createRoom(scenarioId: '1');
+                        .createRoom(scenarioId: widget.scenario.id);
                   },
                 );
               },

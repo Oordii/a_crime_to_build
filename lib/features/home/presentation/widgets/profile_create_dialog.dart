@@ -1,6 +1,6 @@
 import 'package:crime_game/core/resources/extensions/build_context.dart';
 import 'package:crime_game/features/auth/presentation/widgets/submit_button.dart';
-import 'package:crime_game/features/home/data/profile.dart';
+import 'package:crime_game/features/home/data/data.dart';
 import 'package:crime_game/features/home/domain/models/profile/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
