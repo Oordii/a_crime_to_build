@@ -11,5 +11,5 @@ class Routes {
   static const home = RouteInfo(path: '/', name: 'home');
   static const signUp = RouteInfo(path: '/sign_up', name: 'sign_up');
   static const emailSent = RouteInfo(path: '/email_sent', name: 'email_sent');
-  static const room = RouteInfo(path: '/room:room_code', name: 'room');
+  static const room = RouteInfo(path: '/room', name: 'room');
 }

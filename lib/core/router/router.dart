@@ -5,6 +5,7 @@ import 'package:crime_game/features/auth/presentation/email_sent_screen.dart';
 import 'package:crime_game/features/auth/presentation/sign_in_screen.dart';
 import 'package:crime_game/features/auth/presentation/sign_up_screen.dart';
 import 'package:crime_game/features/home/presentation/home_screen.dart';
+import 'package:crime_game/features/room/data/data.dart';
 import 'package:crime_game/features/room/presentation/room_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,16 +14,16 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'router.g.dart';
 
-@riverpod
+@Riverpod()
 GoRouter router(Ref ref) {
   final auth = ref.watch(authProvider);
+  final room = ref.watch(roomDataProvider);
 
   return GoRouter(
     initialLocation: Routes.signIn.path,
     refreshListenable: RouterNotifier(ref),
     redirect: (context, state) {
       final isAuthenticated = !auth.isEmpty;
-      debugPrint('isAuth $isAuthenticated path ${state.fullPath}');
 
       if (state.fullPath == Routes.signIn.path) {
         return isAuthenticated ? Routes.home.path : Routes.signIn.path;
@@ -32,7 +33,19 @@ GoRouter router(Ref ref) {
         return isAuthenticated ? Routes.home.path : Routes.emailSent.path;
       }
 
-      return isAuthenticated ? null : Routes.signIn.path;
+      if (!isAuthenticated) {
+        return Routes.signIn.path;
+      }
+
+      if (room.hasValue) {
+        return Routes.room.path;
+      }
+
+      if (state.fullPath == Routes.room.path && room.hasError) {
+        return null;
+      }
+
+      return null;
     },
     routes: [
       GoRoute(
@@ -58,16 +71,8 @@ GoRouter router(Ref ref) {
       GoRoute(
         path: Routes.room.path,
         name: Routes.room.name,
-        redirect: (context, state) {
-          if (state.pathParameters.containsKey('room_code')) {
-            return null;
-          } else {
-            return Routes.home.path;
-          }
-        },
         builder: (context, state) {
-          final roomCode = state.pathParameters['room_code']!;
-          return RoomScreen(roomCode: roomCode);
+          return RoomScreen();
         },
       ),
     ],
@@ -79,5 +84,6 @@ class RouterNotifier extends ChangeNotifier {
 
   RouterNotifier(this._ref) {
     _ref.listen<AppUser>(authProvider, (_, __) => notifyListeners());
+    _ref.listen(roomDataProvider, (prev, cur) => notifyListeners());
   }
 }

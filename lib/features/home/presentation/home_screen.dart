@@ -4,7 +4,10 @@ import 'package:crime_game/features/auth/data/auth/auth.dart';
 import 'package:crime_game/features/home/data/profile.dart';
 import 'package:crime_game/features/home/domain/models/profile/profile.dart';
 import 'package:crime_game/features/home/presentation/widgets/campaign_card.dart';
+import 'package:crime_game/features/home/presentation/widgets/join_dialog.dart';
 import 'package:crime_game/features/home/presentation/widgets/profile_create_dialog.dart';
+import 'package:crime_game/features/home/presentation/widgets/room_card.dart';
+import 'package:crime_game/features/room/data/active_rooms/active_rooms.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -128,7 +131,66 @@ class SignInScreenState extends ConsumerState<HomeScreen> {
                         children: [
                           Icon(Icons.info_outlined, size: 16),
                           const SizedBox(width: 8),
-                          Text('Info', style: context.textTheme.bodyMedium),
+                          Text(
+                            'Active Rooms',
+                            style: context.textTheme.bodyMedium,
+                          ),
+                          Consumer(
+                            builder: (context, ref, child) {
+                              final rooms = ref.watch(activeRoomsProvider);
+
+                              return Column(
+                                children: [
+                                  SizedBox(
+                                    height: 400,
+                                    child: SingleChildScrollView(
+                                      primary: false,
+                                      child: Column(
+                                        children: [
+                                          if (rooms.isLoading) ...[
+                                            CircularProgressIndicator(),
+                                          ] else if (rooms.hasError) ...[
+                                            Text(
+                                              rooms.error!.toString(),
+                                              style:
+                                                  context.textTheme.labelSmall,
+                                            ),
+                                          ] else if (rooms.hasValue) ...[
+                                            for (final r in rooms.value!) ...[
+                                              RoomCard(room: r),
+                                              const SizedBox(height: 8),
+                                            ],
+                                          ],
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 16),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) =>
+                                                  JoinDialog(),
+                                            );
+                                          },
+                                          child: Text(
+                                            'Join by code',
+                                            style: context.textTheme.bodyMedium,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
                         ],
                       ),
                     ),
