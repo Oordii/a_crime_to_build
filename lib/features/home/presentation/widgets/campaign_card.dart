@@ -1,14 +1,22 @@
 import 'package:crime_game/core/resources/extensions/build_context.dart';
 import 'package:crime_game/core/router/router_constants.dart';
 import 'package:crime_game/features/auth/presentation/widgets/submit_button.dart';
+import 'package:crime_game/features/room/data/data.dart';
+import 'package:crime_game/features/room/domain/domain.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 const String example =
     "In the shadows of a rain-slicked city, corruption whispers through alleyways and power hides behind polished smiles. As a hard-boiled detective with a checkered past, you’re pulled into a case that starts with a missing person—and ends with a conspiracy that could shatter what's left of justice. Trust no one. Follow the lies. Solve the crime... or become part of it.";
 
-class CampaignCard extends StatelessWidget {
+class CampaignCard extends StatefulWidget {
   const CampaignCard({super.key});
 
+  @override
+  State<CampaignCard> createState() => _CampaignCardState();
+}
+
+class _CampaignCardState extends State<CampaignCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -72,12 +80,26 @@ class CampaignCard extends StatelessWidget {
           Positioned(
             bottom: 0,
             right: 16,
-            child: SubmitButton(
-              text: 'Start',
-              onTap: () {
-                context.router.pushNamed(
-                  Routes.room.name,
-                  pathParameters: {'room_code': 'test'},
+            child: Consumer(
+              builder: (context, ref, child) {
+                final createRoomState = ref.watch(createRoomProvider);
+                final roomState = ref.watch(roomDataProvider);
+                ref.listen(roomDataProvider, _roomListener);
+
+                final roomError =
+                    roomState.error?.toString() == 'no_room_entered'
+                    ? null
+                    : roomState.error?.toString();
+
+                return SubmitButton(
+                  text: 'Start',
+                  isLoading: createRoomState.isLoading,
+                  error: createRoomState.error?.toString() ?? roomError,
+                  onTap: () {
+                    ref
+                        .read(createRoomProvider.notifier)
+                        .createRoom(scenarioId: '1');
+                  },
                 );
               },
             ),
@@ -85,5 +107,11 @@ class CampaignCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _roomListener(AsyncValue<Room>? prev, AsyncValue<Room> cur) {
+    if (cur.hasValue) {
+      context.router.pushNamed(Routes.room.name);
+    }
   }
 }

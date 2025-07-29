@@ -7,6 +7,7 @@ class SubmitButton extends StatelessWidget {
   final String? error;
   final String? text;
   final double height;
+  final double width;
   const SubmitButton({
     super.key,
     required this.onTap,
@@ -14,6 +15,7 @@ class SubmitButton extends StatelessWidget {
     this.error,
     this.text,
     this.height = 48,
+    this.width = 144,
   });
 
   @override
@@ -32,7 +34,7 @@ class SubmitButton extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
                 child: Ink(
                   height: height,
-                  width: 144,
+                  width: width,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
                     vertical: 16,
