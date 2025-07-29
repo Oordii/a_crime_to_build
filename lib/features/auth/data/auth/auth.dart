@@ -26,19 +26,6 @@ class Auth extends _$Auth {
     });
   }
 
-  Future<String?> login(String email, String password) async {
-    try {
-      await supabase.auth.signInWithPassword(password: password, email: email);
-
-      return null;
-    } on AuthException catch (er) {
-      print(er.message);
-      return er.message;
-    } catch (err) {
-      return err.toString();
-    }
-  }
-
   logout() async {
     await supabase.auth.signOut();
   }
