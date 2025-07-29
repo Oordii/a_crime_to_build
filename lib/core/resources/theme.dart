@@ -3,8 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 ThemeData get darkDetectiveTheme => ThemeData(
   brightness: Brightness.dark,
-  scaffoldBackgroundColor: const Color(0xFF121212), // near black
-  primaryColor: const Color(0xFF8C735B), // desaturated brass/gold
+  scaffoldBackgroundColor: const Color(0xFF121212),
+  primaryColor: const Color(0xFF8C735B),
   colorScheme: ColorScheme.dark(
     primary: const Color(0xFF8C735B),
     secondary: const Color(0xFF3C3C3C),
@@ -15,6 +15,12 @@ ThemeData get darkDetectiveTheme => ThemeData(
   canvasColor: const Color(0xFF1C1C1C),
   dividerColor: Colors.grey.shade800,
   shadowColor: Colors.black54,
+  snackBarTheme: SnackBarThemeData(
+    backgroundColor: const Color(0xFF3C3C3C),
+    closeIconColor: Colors.grey.shade400,
+    behavior: SnackBarBehavior.floating,
+    showCloseIcon: true,
+  ),
   textTheme: TextTheme(
     displayLarge: GoogleFonts.specialElite(
       fontSize: 32,
