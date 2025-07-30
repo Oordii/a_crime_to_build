@@ -11,6 +11,6 @@ RUN flutter build web
 
 FROM nginx:1.23.3-alpine AS runtime
 COPY --from=builder usr/src/app/build/web /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/
+COPY nginx.conf /etc/nginx/conf.d
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
