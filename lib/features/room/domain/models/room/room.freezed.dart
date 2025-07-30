@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Room {
 
- String get id; String get code; List<RoomUser> get users; RoomUser get creator;
+ String get id; String get code; List<RoomUser> get users; RoomUser get creator;@JsonKey(name: 'scenario_id') String get scenarioId;
 /// Create a copy of Room
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $RoomCopyWith<Room> get copyWith => _$RoomCopyWithImpl<Room>(this as Room, _$ide
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Room&&(identical(other.id, id) || other.id == id)&&(identical(other.code, code) || other.code == code)&&const DeepCollectionEquality().equals(other.users, users)&&(identical(other.creator, creator) || other.creator == creator));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Room&&(identical(other.id, id) || other.id == id)&&(identical(other.code, code) || other.code == code)&&const DeepCollectionEquality().equals(other.users, users)&&(identical(other.creator, creator) || other.creator == creator)&&(identical(other.scenarioId, scenarioId) || other.scenarioId == scenarioId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,code,const DeepCollectionEquality().hash(users),creator);
+int get hashCode => Object.hash(runtimeType,id,code,const DeepCollectionEquality().hash(users),creator,scenarioId);
 
 @override
 String toString() {
-  return 'Room(id: $id, code: $code, users: $users, creator: $creator)';
+  return 'Room(id: $id, code: $code, users: $users, creator: $creator, scenarioId: $scenarioId)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $RoomCopyWith<$Res>  {
   factory $RoomCopyWith(Room value, $Res Function(Room) _then) = _$RoomCopyWithImpl;
 @useResult
 $Res call({
- String id, String code, List<RoomUser> users, RoomUser creator
+ String id, String code, List<RoomUser> users, RoomUser creator,@JsonKey(name: 'scenario_id') String scenarioId
 });
 
 
@@ -65,13 +65,14 @@ class _$RoomCopyWithImpl<$Res>
 
 /// Create a copy of Room
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? code = null,Object? users = null,Object? creator = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? code = null,Object? users = null,Object? creator = null,Object? scenarioId = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,code: null == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
 as String,users: null == users ? _self.users : users // ignore: cast_nullable_to_non_nullable
 as List<RoomUser>,creator: null == creator ? _self.creator : creator // ignore: cast_nullable_to_non_nullable
-as RoomUser,
+as RoomUser,scenarioId: null == scenarioId ? _self.scenarioId : scenarioId // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 /// Create a copy of Room
@@ -165,10 +166,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String code,  List<RoomUser> users,  RoomUser creator)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String code,  List<RoomUser> users,  RoomUser creator, @JsonKey(name: 'scenario_id')  String scenarioId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Room() when $default != null:
-return $default(_that.id,_that.code,_that.users,_that.creator);case _:
+return $default(_that.id,_that.code,_that.users,_that.creator,_that.scenarioId);case _:
   return orElse();
 
 }
@@ -186,10 +187,10 @@ return $default(_that.id,_that.code,_that.users,_that.creator);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String code,  List<RoomUser> users,  RoomUser creator)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String code,  List<RoomUser> users,  RoomUser creator, @JsonKey(name: 'scenario_id')  String scenarioId)  $default,) {final _that = this;
 switch (_that) {
 case _Room():
-return $default(_that.id,_that.code,_that.users,_that.creator);case _:
+return $default(_that.id,_that.code,_that.users,_that.creator,_that.scenarioId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -206,10 +207,10 @@ return $default(_that.id,_that.code,_that.users,_that.creator);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String code,  List<RoomUser> users,  RoomUser creator)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String code,  List<RoomUser> users,  RoomUser creator, @JsonKey(name: 'scenario_id')  String scenarioId)?  $default,) {final _that = this;
 switch (_that) {
 case _Room() when $default != null:
-return $default(_that.id,_that.code,_that.users,_that.creator);case _:
+return $default(_that.id,_that.code,_that.users,_that.creator,_that.scenarioId);case _:
   return null;
 
 }
@@ -221,7 +222,7 @@ return $default(_that.id,_that.code,_that.users,_that.creator);case _:
 @JsonSerializable()
 
 class _Room implements Room {
-  const _Room({required this.id, required this.code, final  List<RoomUser> users = const [], required this.creator}): _users = users;
+  const _Room({required this.id, required this.code, final  List<RoomUser> users = const [], required this.creator, @JsonKey(name: 'scenario_id') required this.scenarioId}): _users = users;
   factory _Room.fromJson(Map<String, dynamic> json) => _$RoomFromJson(json);
 
 @override final  String id;
@@ -234,6 +235,7 @@ class _Room implements Room {
 }
 
 @override final  RoomUser creator;
+@override@JsonKey(name: 'scenario_id') final  String scenarioId;
 
 /// Create a copy of Room
 /// with the given fields replaced by the non-null parameter values.
@@ -248,16 +250,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Room&&(identical(other.id, id) || other.id == id)&&(identical(other.code, code) || other.code == code)&&const DeepCollectionEquality().equals(other._users, _users)&&(identical(other.creator, creator) || other.creator == creator));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Room&&(identical(other.id, id) || other.id == id)&&(identical(other.code, code) || other.code == code)&&const DeepCollectionEquality().equals(other._users, _users)&&(identical(other.creator, creator) || other.creator == creator)&&(identical(other.scenarioId, scenarioId) || other.scenarioId == scenarioId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,code,const DeepCollectionEquality().hash(_users),creator);
+int get hashCode => Object.hash(runtimeType,id,code,const DeepCollectionEquality().hash(_users),creator,scenarioId);
 
 @override
 String toString() {
-  return 'Room(id: $id, code: $code, users: $users, creator: $creator)';
+  return 'Room(id: $id, code: $code, users: $users, creator: $creator, scenarioId: $scenarioId)';
 }
 
 
@@ -268,7 +270,7 @@ abstract mixin class _$RoomCopyWith<$Res> implements $RoomCopyWith<$Res> {
   factory _$RoomCopyWith(_Room value, $Res Function(_Room) _then) = __$RoomCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String code, List<RoomUser> users, RoomUser creator
+ String id, String code, List<RoomUser> users, RoomUser creator,@JsonKey(name: 'scenario_id') String scenarioId
 });
 
 
@@ -285,13 +287,14 @@ class __$RoomCopyWithImpl<$Res>
 
 /// Create a copy of Room
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? code = null,Object? users = null,Object? creator = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? code = null,Object? users = null,Object? creator = null,Object? scenarioId = null,}) {
   return _then(_Room(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,code: null == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
 as String,users: null == users ? _self._users : users // ignore: cast_nullable_to_non_nullable
 as List<RoomUser>,creator: null == creator ? _self.creator : creator // ignore: cast_nullable_to_non_nullable
-as RoomUser,
+as RoomUser,scenarioId: null == scenarioId ? _self.scenarioId : scenarioId // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 

@@ -15,6 +15,7 @@ _Room _$RoomFromJson(Map<String, dynamic> json) => _Room(
           .toList() ??
       const [],
   creator: RoomUser.fromJson(json['creator'] as Map<String, dynamic>),
+  scenarioId: json['scenario_id'] as String,
 );
 
 Map<String, dynamic> _$RoomToJson(_Room instance) => <String, dynamic>{
@@ -22,4 +23,5 @@ Map<String, dynamic> _$RoomToJson(_Room instance) => <String, dynamic>{
   'code': instance.code,
   'users': instance.users,
   'creator': instance.creator,
+  'scenario_id': instance.scenarioId,
 };

@@ -1,4 +1,5 @@
 import 'package:crime_game/core/resources/extensions/build_context.dart';
+import 'package:crime_game/features/home/data/data.dart';
 import 'package:crime_game/features/room/data/data.dart';
 import 'package:crime_game/features/room/domain/domain.dart';
 import 'package:crime_game/features/room/presentation/widgets/widgets.dart';
@@ -112,16 +113,83 @@ class RoomScreenState extends ConsumerState<RoomScreen> {
                 const SizedBox(width: 24),
                 Expanded(
                   flex: 3,
-                  child: Card(
-                    child: SizedBox(
-                      height: 700,
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 24),
-                          RoomCode(roomData: roomData),
-                        ],
-                      ),
-                    ),
+                  child: Consumer(
+                    builder: (context, ref, child) {
+                      final scenarios = ref.watch(scenariosProvider);
+                      return Card(
+                        child: SizedBox(
+                          height: 700,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 24,
+                              horizontal: 24,
+                            ),
+                            child: Column(
+                              children: [
+                                RoomCode(roomData: roomData),
+                                const SizedBox(height: 24),
+                                ...scenarios.map<List<Widget>>(
+                                  data: (data) {
+                                    final scenario = data.value.singleWhere(
+                                      (e) => e.id == roomData.scenarioId,
+                                    );
+
+                                    return [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            scenario.name,
+                                            style:
+                                                context.textTheme.displayLarge,
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 24),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              scenario.fullDesc,
+                                              style:
+                                                  context.textTheme.bodyMedium,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ];
+                                  },
+                                  error: (err) => [
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.info_outlined,
+                                          size: 36,
+                                          color: Colors.red.shade700,
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          'Error occured: ${err.error.toString()}',
+                                          style: context.textTheme.labelSmall,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                  loading: (_) => [
+                                    Center(child: CircularProgressIndicator()),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(width: 48),
