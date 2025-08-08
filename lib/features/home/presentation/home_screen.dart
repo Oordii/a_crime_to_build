@@ -3,13 +3,10 @@ import 'package:crime_game/core/resources/extensions/build_context.dart';
 import 'package:crime_game/features/auth/data/auth/auth.dart';
 import 'package:crime_game/features/home/data/data.dart';
 import 'package:crime_game/features/home/domain/models/profile/profile.dart';
-import 'package:crime_game/features/home/presentation/widgets/campaign_card.dart';
-import 'package:crime_game/features/home/presentation/widgets/join_dialog.dart';
-import 'package:crime_game/features/home/presentation/widgets/profile_create_dialog.dart';
-import 'package:crime_game/features/home/presentation/widgets/room_card.dart';
 import 'package:crime_game/features/room/data/active_rooms/active_rooms.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'widgets/widgets.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});

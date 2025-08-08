@@ -48,7 +48,7 @@ class SubmitButton extends StatelessWidget {
                   child: isLoading
                       ? Center(
                           child: const SizedBox(
-                            height: 20,
+                            height: 24,
                             width: 20,
                             child: CircularProgressIndicator(
                               color: Colors.white,
