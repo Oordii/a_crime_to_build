@@ -3,7 +3,6 @@ import 'package:crime_game/core/router/router_constants.dart';
 import 'package:crime_game/features/auth/data/auth/auth.dart';
 import 'package:crime_game/features/home/data/data.dart';
 import 'package:crime_game/features/room/data/data.dart';
-import 'package:crime_game/features/room/data/kick_user/kick_user.dart';
 import 'package:crime_game/features/room/domain/domain.dart';
 import 'package:crime_game/features/room/presentation/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -59,86 +58,7 @@ class RoomScreenState extends ConsumerState<RoomScreen> {
               children: [
                 const SizedBox(width: 48),
                 Expanded(
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 4),
-                                child: Icon(Icons.info_outlined, size: 16),
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Players',
-                                style: context.textTheme.bodyLarge,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 24),
-                          Card(
-                            child: Padding(
-                              padding: EdgeInsetsGeometry.all(4),
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 4),
-                                    child: Icon(Icons.star, size: 16),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    roomData.creator.username,
-                                    style: context.textTheme.bodyMedium,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          for (final user in roomData.users) ...[
-                            Card(
-                              child: Padding(
-                                padding: EdgeInsetsGeometry.all(4),
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(bottom: 4),
-                                      child: Icon(Icons.person, size: 16),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      user.username,
-                                      style: context.textTheme.bodyMedium,
-                                    ),
-                                    const Spacer(),
-                                    if (auth.uid == roomData.creator.id)
-                                      IconButton(
-                                        onPressed: () {
-                                          ref.read(
-                                            kickUserProvider(userId: user.id),
-                                          );
-                                        },
-                                        icon: Padding(
-                                          padding: const EdgeInsets.only(
-                                            bottom: 4,
-                                          ),
-                                          child: Icon(
-                                            Icons.exit_to_app,
-                                            size: 16,
-                                          ),
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ),
+                  child: PlayerSection(roomData: roomData, auth: auth),
                 ),
                 const SizedBox(width: 24),
                 Expanded(
