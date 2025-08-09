@@ -37,12 +37,8 @@ GoRouter router(Ref ref) {
         return Routes.signIn.path;
       }
 
-      if (room.hasValue) {
+      if (room.hasValue && room.error?.toString() != 'no_room_entered') {
         return Routes.room.path;
-      }
-
-      if (state.fullPath == Routes.room.path && room.hasError) {
-        return null;
       }
 
       return null;
@@ -71,6 +67,13 @@ GoRouter router(Ref ref) {
       GoRoute(
         path: Routes.room.path,
         name: Routes.room.name,
+        redirect: (context, state) {
+          if (room.error?.toString() == 'no_room_entered') {
+            return Routes.home.path;
+          }
+
+          return null;
+        },
         builder: (context, state) {
           return RoomScreen();
         },
