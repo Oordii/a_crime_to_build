@@ -1,4 +1,5 @@
 import 'package:crime_game/core/resources/utils/supabase.dart';
+import 'package:crime_game/features/room/data/active_rooms/active_rooms.dart';
 import 'package:crime_game/features/room/domain/domain.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -14,13 +15,17 @@ class JoinRoom extends _$JoinRoom {
 
   FutureOr<void> joinRoom({required String code}) async {
     state = AsyncLoading();
-    List<Map<String, dynamic>> res;
+    Map<String, dynamic> res;
     try {
-      res = await supabase.from('room').insert({}).select();
+      res = await supabase.rpc<Map<String, dynamic>>(
+        'join_room',
+        params: {'p_code': code},
+      );
+      ref.invalidate(activeRoomsProvider);
     } on PostgrestException catch (e) {
       throw e.message;
     }
-    state = AsyncData(res.first['id']);
+    state = AsyncData(res['id']);
   }
 
   void joinActiveRoom({required Room room}) {

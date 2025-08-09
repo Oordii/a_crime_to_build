@@ -6,7 +6,7 @@ part of 'join_room.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$joinRoomHash() => r'370fbc46e713c6f0b8d3aa1d32a6aaf921eb66b1';
+String _$joinRoomHash() => r'fada495b7ac158a19422482cd61ed0ef03380ba1';
 
 /// See also [JoinRoom].
 @ProviderFor(JoinRoom)
