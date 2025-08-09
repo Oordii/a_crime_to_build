@@ -2,6 +2,8 @@ import 'package:crime_game/core/resources/extensions/build_context.dart';
 import 'package:crime_game/core/router/router_constants.dart';
 import 'package:crime_game/features/auth/presentation/widgets/submit_button.dart';
 import 'package:crime_game/features/home/domain/domain.dart';
+import 'package:crime_game/features/home/presentation/widgets/widgets.dart';
+import 'package:crime_game/features/room/data/active_rooms/active_rooms.dart';
 import 'package:crime_game/features/room/data/data.dart';
 import 'package:crime_game/features/room/domain/domain.dart';
 import 'package:flutter/material.dart';
@@ -83,6 +85,7 @@ class _CampaignCardState extends State<CampaignCard> {
               builder: (context, ref, child) {
                 final createRoomState = ref.watch(createRoomProvider);
                 final roomState = ref.watch(roomDataProvider);
+                final activeRooms = ref.watch(activeRoomsProvider);
                 ref.listen(roomDataProvider, _roomListener);
 
                 final roomError =
@@ -92,12 +95,27 @@ class _CampaignCardState extends State<CampaignCard> {
 
                 return SubmitButton(
                   text: 'Start',
-                  isLoading: createRoomState.isLoading,
+                  isLoading: createRoomState.isLoading || activeRooms.isLoading,
                   error: createRoomState.error?.toString() ?? roomError,
-                  onTap: () {
-                    ref
-                        .read(createRoomProvider.notifier)
-                        .createRoom(scenarioId: widget.scenario.id);
+                  onTap: () async {
+                    bool shouldCreate = true;
+                    if (activeRooms.hasValue && activeRooms.value!.isNotEmpty) {
+                      shouldCreate = false;
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => CreateRoomConfirmDialog(),
+                      );
+
+                      if (confirm ?? false) {
+                        shouldCreate = true;
+                      }
+                    }
+
+                    if (shouldCreate) {
+                      ref
+                          .read(createRoomProvider.notifier)
+                          .createRoom(scenarioId: widget.scenario.id);
+                    }
                   },
                 );
               },

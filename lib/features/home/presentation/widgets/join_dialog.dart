@@ -1,5 +1,7 @@
 import 'package:crime_game/core/resources/extensions/build_context.dart';
 import 'package:crime_game/features/auth/presentation/widgets/submit_button.dart';
+import 'package:crime_game/features/home/presentation/widgets/join_room_confirm_dialog.dart';
+import 'package:crime_game/features/room/data/active_rooms/active_rooms.dart';
 import 'package:crime_game/features/room/data/data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,6 +26,7 @@ class _JoinDialogState extends ConsumerState<JoinDialog> {
   @override
   Widget build(BuildContext context) {
     final join = ref.watch(joinRoomProvider);
+    final activeRooms = ref.watch(activeRoomsProvider);
 
     return Material(
       color: Colors.transparent,
@@ -79,12 +82,27 @@ class _JoinDialogState extends ConsumerState<JoinDialog> {
               ),
               const SizedBox(height: 48),
               SubmitButton(
-                isLoading: join.isLoading,
+                isLoading: join.isLoading || activeRooms.isLoading,
                 error: join.error?.toString(),
-                onTap: () {
-                  ref
-                      .read(joinRoomProvider.notifier)
-                      .joinRoom(code: codeC.text);
+                onTap: () async {
+                  bool shouldJoin = true;
+                  if (activeRooms.hasValue && activeRooms.value!.isNotEmpty) {
+                    shouldJoin = false;
+                    final confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => JoinRoomConfirmDialog(),
+                    );
+
+                    if (confirm ?? false) {
+                      shouldJoin = true;
+                    }
+                  }
+
+                  if (shouldJoin) {
+                    ref
+                        .read(joinRoomProvider.notifier)
+                        .joinRoom(code: codeC.text);
+                  }
                 },
               ),
             ],

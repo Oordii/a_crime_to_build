@@ -1,6 +1,9 @@
 import 'package:crime_game/core/resources/extensions/build_context.dart';
+import 'package:crime_game/core/router/router_constants.dart';
+import 'package:crime_game/features/auth/data/auth/auth.dart';
 import 'package:crime_game/features/home/data/data.dart';
 import 'package:crime_game/features/room/data/data.dart';
+import 'package:crime_game/features/room/data/kick_user/kick_user.dart';
 import 'package:crime_game/features/room/domain/domain.dart';
 import 'package:crime_game/features/room/presentation/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -14,9 +17,16 @@ class RoomScreen extends ConsumerStatefulWidget {
 }
 
 class RoomScreenState extends ConsumerState<RoomScreen> {
+  void roomListener(AsyncValue<Room>? prev, AsyncValue<Room> cur) {
+    if (cur.error?.toString() == 'no_room_entered') {
+      context.router.goNamed(Routes.home.name);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final room = ref.watch(roomDataProvider);
+    ref.listen(roomDataProvider, roomListener);
 
     if (room is AsyncLoading) {
       return Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -32,6 +42,8 @@ class RoomScreenState extends ConsumerState<RoomScreen> {
     }
 
     final roomData = (room as AsyncData<Room>).value;
+
+    final auth = ref.watch(authProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -100,6 +112,24 @@ class RoomScreenState extends ConsumerState<RoomScreen> {
                                       user.username,
                                       style: context.textTheme.bodyMedium,
                                     ),
+                                    const Spacer(),
+                                    if (auth.uid == roomData.creator.id)
+                                      IconButton(
+                                        onPressed: () {
+                                          ref.read(
+                                            kickUserProvider(userId: user.id),
+                                          );
+                                        },
+                                        icon: Padding(
+                                          padding: const EdgeInsets.only(
+                                            bottom: 4,
+                                          ),
+                                          child: Icon(
+                                            Icons.exit_to_app,
+                                            size: 16,
+                                          ),
+                                        ),
+                                      ),
                                   ],
                                 ),
                               ),

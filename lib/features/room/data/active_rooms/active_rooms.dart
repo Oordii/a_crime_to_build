@@ -13,8 +13,8 @@ Future<List<Room>> activeRooms(Ref ref) async {
         'room:room_id(*, creator:creator_id(*), users:room_user(user:user_id(*)))',
       )
       .eq('user_id', supabase.auth.currentUser!.id);
-  roomUserResponse.map((r) {
-    r = r['room'];
+  final formatedUserRes = roomUserResponse.map((r) {
+    r = r['room'] as Map<String, dynamic>;
     r['users'] = (r['users'] as List)
         .map((e) => (e as Map<String, dynamic>)['user'])
         .toList();
@@ -26,14 +26,13 @@ Future<List<Room>> activeRooms(Ref ref) async {
       .select('*, creator:creator_id(*), users:room_user(user:user_id(*))')
       .eq('creator_id', supabase.auth.currentUser!.id);
 
-  creatorResponse.map((r) {
+  final formatedCreatorRes = creatorResponse.map((r) {
     r['users'] = (r['users'] as List)
         .map((e) => (e as Map<String, dynamic>)['user'])
         .toList();
     return r;
   });
 
-  final mergedRooms = [...roomUserResponse, ...creatorResponse];
-
+  final mergedRooms = [...formatedUserRes, ...formatedCreatorRes];
   return mergedRooms.map((e) => Room.fromJson(e)).toList();
 }
