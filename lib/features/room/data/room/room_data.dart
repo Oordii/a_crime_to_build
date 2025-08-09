@@ -44,10 +44,15 @@ class RoomData extends _$RoomData {
     return Room.fromJson(res);
   }
 
-  void leaveRoom() {
-    _channel?.unsubscribe();
+  // represents leaving room for state management and navigation, not leaving room logic as it is separated in leavingRoom provider
+  Future<void> leaveRoom() async {
+    await _channel?.unsubscribe();
     _channel = null;
-    state = AsyncError('no_room_entered', StackTrace.fromString(''));
+    ref.invalidate(joinRoomProvider);
+    ref.invalidate(createRoomProvider);
+    state = const AsyncValue.loading();
+    state = AsyncValue.error('no_room_entered', StackTrace.current);
+    ref.invalidateSelf();
   }
 
   void _subscribeToRoomUpdates(String roomId) {
@@ -75,15 +80,53 @@ class RoomData extends _$RoomData {
           column: 'room_id',
           value: roomId,
         ),
-        callback: (payload) {
+        callback: (payload) async {
           if (payload.oldRecord['user_id'] == supabase.auth.currentUser?.id) {
-            leaveRoom();
+            final room = await _fetchRoom(payload.oldRecord['room_id']);
+            if (room.creator.id != supabase.auth.currentUser?.id) {
+              await leaveRoom();
+            }
+          } else {
+            await update((current) async {
+              final room = await _fetchRoom(current.id);
+              return room;
+            });
+          }
+        },
+      )
+      ..onPostgresChanges(
+        table: 'room',
+        event: PostgresChangeEvent.update,
+        filter: PostgresChangeFilter(
+          type: PostgresChangeFilterType.eq,
+          column: 'id',
+          value: roomId,
+        ),
+        callback: (payload) async {
+          final oldCreatorId = state.value?.creator.id;
+
+          if (oldCreatorId == supabase.auth.currentUser?.id &&
+              payload.newRecord['creator_id'] !=
+                  supabase.auth.currentUser?.id) {
+            await leaveRoom();
           } else {
             update((current) async {
               final room = await _fetchRoom(current.id);
               return room;
             });
           }
+        },
+      )
+      ..onPostgresChanges(
+        table: 'room',
+        event: PostgresChangeEvent.delete,
+        filter: PostgresChangeFilter(
+          type: PostgresChangeFilterType.eq,
+          column: 'id',
+          value: roomId,
+        ),
+        callback: (payload) async {
+          await leaveRoom();
         },
       )
       ..subscribe();
