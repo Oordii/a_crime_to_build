@@ -67,6 +67,25 @@ class RoomData extends _$RoomData {
           });
         },
       )
+      ..onPostgresChanges(
+        table: 'room_user',
+        event: PostgresChangeEvent.delete,
+        filter: PostgresChangeFilter(
+          type: PostgresChangeFilterType.eq,
+          column: 'room_id',
+          value: roomId,
+        ),
+        callback: (payload) {
+          if (payload.oldRecord['user_id'] == supabase.auth.currentUser?.id) {
+            leaveRoom();
+          } else {
+            update((current) async {
+              final room = await _fetchRoom(current.id);
+              return room;
+            });
+          }
+        },
+      )
       ..subscribe();
 
     ref.onDispose(() {
