@@ -4,6 +4,8 @@ import 'package:crime_game/features/auth/domain/domain.dart';
 import 'package:crime_game/features/auth/presentation/email_sent_screen.dart';
 import 'package:crime_game/features/auth/presentation/sign_in_screen.dart';
 import 'package:crime_game/features/auth/presentation/sign_up_screen.dart';
+import 'package:crime_game/features/game/presentation/game_screen.dart';
+import 'package:crime_game/features/game/presentation/location_screen.dart';
 import 'package:crime_game/features/home/presentation/home_screen.dart';
 import 'package:crime_game/features/room/data/data.dart';
 import 'package:crime_game/features/room/presentation/room_screen.dart';
@@ -37,10 +39,6 @@ GoRouter router(Ref ref) {
         return Routes.signIn.path;
       }
 
-      if (room.hasValue && room.error?.toString() != 'no_room_entered') {
-        return Routes.room.path;
-      }
-
       return null;
     },
     routes: [
@@ -57,6 +55,12 @@ GoRouter router(Ref ref) {
       GoRoute(
         path: Routes.home.path,
         name: Routes.home.name,
+        redirect: (context, state) {
+          if (room.hasValue && room.error?.toString() != 'no_room_entered') {
+            return Routes.room.path;
+          }
+          return null;
+        },
         builder: (context, state) => const HomeScreen(),
       ),
       GoRoute(
@@ -77,6 +81,28 @@ GoRouter router(Ref ref) {
         builder: (context, state) {
           return RoomScreen();
         },
+      ),
+      ShellRoute(
+        builder: (context, state, child) {
+          return GameScreen(child: child);
+        },
+        routes: [
+          GoRoute(
+            path: Routes.location.path,
+            name: Routes.location.name,
+            redirect: (context, state) {
+              final id = state.pathParameters['location_id'];
+              if (id == null || id.isEmpty) {
+                return Routes.game.path;
+              }
+              return null;
+            },
+            builder: (context, state) {
+              final locationId = state.pathParameters['location_id']!;
+              return LocationScreen(locationId: locationId);
+            },
+          ),
+        ],
       ),
     ],
   );

@@ -39,6 +39,10 @@ ThemeData get darkDetectiveTheme => ThemeData(
       fontSize: 18,
       color: const Color(0xFF8C735B),
     ),
+    labelMedium: GoogleFonts.specialElite(
+      fontSize: 12,
+      color: Colors.grey.shade300,
+    ),
     labelSmall: GoogleFonts.specialElite(
       fontSize: 12,
       color: Colors.red.shade700,
