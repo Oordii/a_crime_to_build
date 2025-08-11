@@ -17,34 +17,79 @@ class LocationScreenState extends ConsumerState<LocationScreen> {
   Widget build(BuildContext context) {
     final game = ref.watch(gameProvider);
 
-    return game.when(
-      data: (GameModel data) {
-        final location = data.locations.singleWhere(
-          (e) => e.id == widget.locationId,
-        );
+    if (game is AsyncError<GameModel>) {
+      return Scaffold(
+        body: Center(
+          child: Text(
+            game.error.toString(),
+            style: context.textTheme.labelSmall,
+          ),
+        ),
+      );
+    }
 
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(location.name, style: context.textTheme.displayLarge),
-          ),
-          body: Center(
-            child: Text(
-              location.desc ?? "smth i dunno",
-              style: context.textTheme.bodyMedium,
+    if (game is AsyncLoading<GameModel>) {
+      return Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    final location = game.value!.locations.singleWhere(
+      (e) => e.id == widget.locationId,
+    );
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(location.name, style: context.textTheme.displayLarge),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.only(top: 24),
+        child: Row(
+          children: [
+            Expanded(flex: 1, child: Column()),
+            Expanded(
+              flex: 4,
+              child: Column(
+                children: [
+                  if (location.backgroundUrl != null) ...[
+                    ClipRRect(
+                      borderRadius: BorderRadiusGeometry.circular(16),
+                      child: Image.network(
+                        location.backgroundUrl!,
+                        height: 400,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 16),
+                  if (location.desc != null)
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            location.desc!,
+                            style: context.textTheme.titleMedium,
+                            textAlign: TextAlign.start,
+                          ),
+                        ),
+                      ],
+                    ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'What should we do here?',
+                          style: context.textTheme.titleMedium,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        );
-      },
-      error: (Object error, StackTrace stackTrace) {
-        return Scaffold(
-          body: Center(
-            child: Text(error.toString(), style: context.textTheme.labelSmall),
-          ),
-        );
-      },
-      loading: () {
-        return Scaffold(body: Center(child: CircularProgressIndicator()));
-      },
+          ],
+        ),
+      ),
     );
   }
 }
