@@ -7,7 +7,7 @@ RUN flutter config --enable-web
 WORKDIR /usr/src/app
 COPY . ./
 RUN flutter pub get
-RUN flutter build web
+RUN flutter build web --wasm
 
 FROM nginx:1.23.3-alpine AS runtime
 COPY --from=builder usr/src/app/build/web /usr/share/nginx/html
